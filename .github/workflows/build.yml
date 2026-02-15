@@ -1,0 +1,39 @@
+name: Build main-amd
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.21
+
+    - name: Build main-amd
+      run: |
+        go build -o main-amd main.go
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v1.0
+        name: main-amd
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload main-amd to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: main-amd
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
